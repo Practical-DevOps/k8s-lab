@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  serviceName: "mysql"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels: 
+        app: mysql
+    spec:
+      containers: 
+      - name: mysql
+        image: mysql:8
+        resources:
+          limits :
+            cpu: 500m
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          # change this
+          value: yourpassword
+        - name: MYSQL_DATABASE
+          value: app
+        ports: 
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+          # name must match the volume name below
+        - name: mysql-persistent-storage
+          # mount path within the container
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-persistent-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "kops-csi-1-21"
+        resources:
+          requests:
+            storage: 5Gi

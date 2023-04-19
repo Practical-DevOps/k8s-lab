@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: message-service
+  labels:
+    app: message-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      name: http
+  selector:
+    app: message-service
